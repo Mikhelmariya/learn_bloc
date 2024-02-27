@@ -117,7 +117,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.black,
                 ),
               );
-            })
+            }),
+            BlocListener<CounterBloc, CounterState>(
+                listener: (context, state) {
+                  if (state.count == 3) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text("Count is 3")));
+                  }
+                },
+                child: Text("Bloc Listener")),
           ],
         ),
       ),
