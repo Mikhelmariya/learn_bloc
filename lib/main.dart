@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc/bloc/counter_bloc.dart';
 import 'package:learn_bloc/bloc/counter_event.dart';
 import 'package:learn_bloc/bloc/counter_state.dart';
+import 'package:learn_bloc/visibility_bloc/visibility_bloc.dart';
+import 'package:learn_bloc/visibility_bloc/visibility_event.dart';
+import 'package:learn_bloc/visibility_bloc/visibility_state.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,8 +39,11 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: BlocProvider.value(
-          value: context.read<CounterBloc>(),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => CounterBloc()),
+            BlocProvider(create: (context) => VisibilityBloc()),
+          ],
           child: const MyHomePage(title: 'Flutter Demo Home Page'),
         ));
   }
@@ -83,19 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
@@ -113,14 +107,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: Theme.of(context).textTheme.headlineMedium,
               );
             }),
+            BlocBuilder<VisibilityBloc, VisibilityState>(
+                builder: (context, state) {
+              return Visibility(
+                visible: state.isVisible,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  color: Colors.black,
+                ),
+              );
+            })
           ],
         ),
       ),
       floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
-            width: 10,
-          ),
           FloatingActionButton(
             onPressed: () {
               //add event
@@ -130,9 +133,6 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             tooltip: 'Increment',
             child: const Icon(Icons.add),
-          ),
-          const SizedBox(
-            width: 10,
           ),
           FloatingActionButton(
             onPressed: () {
@@ -144,6 +144,22 @@ class _MyHomePageState extends State<MyHomePage> {
             tooltip: 'Decrement',
             child: const Icon(Icons.minimize),
           ),
+          FloatingActionButton(
+              onPressed: () {
+                //add event
+                context
+                    .read<VisibilityBloc>()
+                    .add(MakeVisible()); // "create" is called
+              },
+              child: Text("Make visible")),
+          FloatingActionButton(
+              onPressed: () {
+                //add event
+                context
+                    .read<VisibilityBloc>()
+                    .add(MakeInvisible()); // "create" is called
+              },
+              child: Text("Make Invisible")),
         ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
