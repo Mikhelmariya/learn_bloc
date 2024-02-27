@@ -35,9 +35,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: BlocProvider<CounterBloc>(
-          lazy: true, // if lazy parameter is true , then instance is created immediately
-          create: (context) => CounterBloc(),
+        home: BlocProvider.value(
+          value: context.read<CounterBloc>(),
           child: const MyHomePage(title: 'Flutter Demo Home Page'),
         ));
   }
@@ -125,7 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
           FloatingActionButton(
             onPressed: () {
               //add event
-              context.read<CounterBloc>().add(CounterIncrementEvent()); // "create" is called
+              context
+                  .read<CounterBloc>()
+                  .add(CounterIncrementEvent()); // "create" is called
             },
             tooltip: 'Increment',
             child: const Icon(Icons.add),
@@ -136,7 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
           FloatingActionButton(
             onPressed: () {
               //add event
-              context.read<CounterBloc>().add(CounterDecrementEvent());  // "create" is called
+              context
+                  .read<CounterBloc>()
+                  .add(CounterDecrementEvent()); // "create" is called
             },
             tooltip: 'Decrement',
             child: const Icon(Icons.minimize),
