@@ -95,12 +95,11 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            BlocBuilder<CounterBloc, CounterState>(
-                buildWhen: (previous, current) {
-              print(previous.count);
-              print(current.count);
-              return true;
-              //  ui gets updated only if buildwhen returns true
+            BlocConsumer<CounterBloc, CounterState>(listener: (context, state) {
+              if (state.count == 3) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text("Count is 3")));
+              }
             }, builder: (context, state) {
               return Text(
                 state.count.toString(),
@@ -118,14 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               );
             }),
-            BlocListener<CounterBloc, CounterState>(
-                listener: (context, state) {
-                  if (state.count == 3) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text("Count is 3")));
-                  }
-                },
-                child: Text("Bloc Listener")),
           ],
         ),
       ),
