@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_bloc/bloc/counter_bloc.dart';
 import 'package:learn_bloc/bloc/counter_event.dart';
 import 'package:learn_bloc/bloc/counter_state.dart';
+import 'package:learn_bloc/cubit/countercubit.dart';
+import 'package:learn_bloc/cubit/countercubit_state.dart';
 import 'package:learn_bloc/visibility_bloc/visibility_bloc.dart';
 import 'package:learn_bloc/visibility_bloc/visibility_event.dart';
 import 'package:learn_bloc/visibility_bloc/visibility_state.dart';
@@ -41,6 +43,7 @@ class MyApp extends StatelessWidget {
         ),
         home: MultiBlocProvider(
           providers: [
+            BlocProvider(create: (context) => CounterCubit()),
             BlocProvider(create: (context) => CounterBloc()),
             BlocProvider(create: (context) => VisibilityBloc()),
           ],
@@ -117,6 +120,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               );
             }),
+            SizedBox(height: 20),
+            BlocBuilder<CounterCubit, CounterCubitState>(
+                builder: (context, state) {
+              return Text(
+                state.count.toString(),
+                style: Theme.of(context).textTheme.headlineMedium,
+              );
+            })
           ],
         ),
       ),
@@ -159,6 +170,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     .add(MakeInvisible()); // "create" is called
               },
               child: Text("Make Invisible")),
+          FloatingActionButton(
+            onPressed: () {
+              //add event
+              context.read<CounterCubit>().increment();
+            },
+            tooltip: 'Cubit add 3',
+            child: const Icon(Icons.add),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              //add event
+              context.read<CounterCubit>().decrement(); // "create" is called
+            },
+            tooltip: 'Cubit sub 3',
+            child: const Icon(Icons.minimize),
+          ),
         ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
